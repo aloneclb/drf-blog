@@ -2,17 +2,16 @@ from rest_framework import generics
 from post.models import Post, Category, Tag
 from .serializers import PostSerializer, TagSerializer, CategorySerializer
 from .permissions import IsAdminUserOrReadOnly, IsOwnerOrReadOnly
-from rest_framework.exceptions import ValidationError
-from .pagination import LargePagination, SmallPagination
+from .pagination import LargePagination
 from django.db.models import Q
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.contrib.auth.models import User
 
 
 class PostListCreateView(generics.ListCreateAPIView):
-    # permission_classes = [IsAdminUserOrReadOnly]
+    permission_classes = [IsAdminUserOrReadOnly]
     serializer_class = PostSerializer
-    parser_classes = [MultiPartParser, FormParser] # Form içerisinden image alanına izin ver
+    parser_classes = [MultiPartParser, FormParser] # parser
     queryset = Post.objects.filter(status = 'published').prefetch_related('category', 'author', 'tags')
     pagination_class = LargePagination
 
@@ -31,15 +30,8 @@ class SinglePostRetrieveDestroyView(generics.RetrieveUpdateDestroyAPIView):
         """
         You cannot change the owner of the post.
         """
-        # Author alanını isteğe dahil bile etmedik bu şekilde
         user = User.objects.get( id = self.request.user.pk)
         serializer.validated_data['author'] = user
-        
-        # print(serializer.validated_data)
-        # post_pk = self.kwargs.get('pk')
-        # post = Post.objects.get(pk = post_pk)
-        # if post.author.pk != int(self.request.data['author']):
-        #     raise ValidationError('Postun sahibini değiştiremezsiniz.')
         serializer.save()
 
 
