@@ -1,6 +1,6 @@
 from rest_framework import generics, permissions
 from post.models import Post, Category, Tag
-from .serializers import PostSerializer, TagSerializer, CategorySerializer, SinglePostSerializer
+from .serializers import PostSerializer, TagSerializer, CategorySerializer, SinglePostReadSerializer, SinglePostUpdateSerializer
 from .permissions import IsAdminUserOrReadOnly, IsOwnerOrReadOnly
 from .pagination import LargePagination
 from django.db.models import Q
@@ -24,7 +24,14 @@ class PostListCreateView(generics.ListCreateAPIView):
 class SinglePostRetrieveDestroyView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsOwnerOrReadOnly]
     queryset = Post.objects.prefetch_related('category', 'author', 'tags','comments')
-    serializer_class = SinglePostSerializer
+
+
+    def get_serializer_class(self):
+        if self.request.method == 'PUT':
+            return SinglePostUpdateSerializer 
+        else:
+            return SinglePostReadSerializer
+
 
     def perform_update(self, serializer):
         """
@@ -32,6 +39,8 @@ class SinglePostRetrieveDestroyView(generics.RetrieveUpdateDestroyAPIView):
         """
         user = User.objects.get( id = self.request.user.pk)
         serializer.validated_data['author'] = user
+        print(serializer.validated_data)
+        print(self.request.method)
         serializer.save()
 
 

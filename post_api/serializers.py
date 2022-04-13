@@ -59,9 +59,28 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 
-class SinglePostSerializer(serializers.ModelSerializer):
+class SinglePostReadSerializer(serializers.ModelSerializer):
     comments = CommentSerializer(many=True, read_only=True)
+    tags = TagSerializer(many=True, read_only=True)
 
+    class Meta:
+        model = Post
+        fields = ['id',
+                'author',
+                'title',
+                'excerpt',
+                'image',
+                'content',
+                'slug',
+                'status',
+                'category',
+                'tags',
+                'comments'
+                ]
+        read_only_fields = ['id', 'author', 'comments']
+    
+
+class SinglePostUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = ['id',

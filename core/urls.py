@@ -20,6 +20,8 @@ urlpatterns = [
 
     path('api/', include('post_api.urls', namespace='post_api')),
 
+    path('api/members/', include('members_api.urls', namespace='members_api')), # Register Url
+
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'), # Djangorestfremawork SimpleJWT
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'), # Djangorestfremawork SimpleJWT
     
