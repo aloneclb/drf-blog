@@ -9,7 +9,8 @@ from django.contrib.auth.models import User
 
 
 class PostListCreateView(generics.ListCreateAPIView):
-    permission_classes = [IsAdminUserOrReadOnly]
+    # permission_classes = [IsAdminUserOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated]
     serializer_class = PostSerializer
     parser_classes = [MultiPartParser, FormParser] # parser
     queryset = Post.objects.filter(status = 'published').prefetch_related('category', 'author', 'tags')
