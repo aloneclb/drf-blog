@@ -1,6 +1,6 @@
-from rest_framework import generics
+from rest_framework import generics, permissions
 from post.models import Post, Category, Tag
-from .serializers import PostSerializer, TagSerializer, CategorySerializer
+from .serializers import PostSerializer, TagSerializer, CategorySerializer, SinglePostSerializer
 from .permissions import IsAdminUserOrReadOnly, IsOwnerOrReadOnly
 from .pagination import LargePagination
 from django.db.models import Q
@@ -23,8 +23,8 @@ class PostListCreateView(generics.ListCreateAPIView):
 
 class SinglePostRetrieveDestroyView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsOwnerOrReadOnly]
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
+    queryset = Post.objects.prefetch_related('category', 'author', 'tags','comments')
+    serializer_class = SinglePostSerializer
 
     def perform_update(self, serializer):
         """
@@ -49,7 +49,7 @@ class SearchPostListView(generics.ListAPIView):
         if author is not None:
             queryset = queryset.filter(author__username__icontains=author)
         if tag is not None:
-            queryset = queryset.filter(tags__title=tag)
+            queryset = queryset.filter(tags__title__icontains=tag)
         if category is not None:
             queryset = queryset.filter(category__title__icontains=category)
         if title is not None:

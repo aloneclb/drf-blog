@@ -7,7 +7,6 @@ from django.db.models.signals import pre_save, post_save, post_delete
 from django.dispatch import receiver
 from django.core.exceptions import ValidationError
 from django.db.models.signals import m2m_changed
-from PIL import Image # for image resize
 import os
 from core.settings import BASE_DIR
 from django.template.defaultfilters import slugify
@@ -23,7 +22,7 @@ def path_and_rename(instance, filename):
 
 
 class Category(models.Model):
-    title = models.CharField(max_length=250)
+    title = models.CharField(max_length=250, unique=True)
     slug = models.SlugField(unique=True, editable=False)
 
     def __str__(self):
@@ -31,7 +30,7 @@ class Category(models.Model):
 
 
 class Tag(models.Model):
-    title = models.CharField(max_length=250)
+    title = models.CharField(max_length=250, unique=True)
     slug = models.SlugField(unique=True, editable=False)
 
     def __str__(self):
