@@ -40,8 +40,8 @@ class SinglePostRetrieveDestroyView(generics.RetrieveUpdateDestroyAPIView):
         """
         user = User.objects.get( id = self.request.user.pk)
         serializer.validated_data['author'] = user
-        print(serializer.validated_data)
-        print(self.request.method)
+        # print(serializer.validated_data)
+        # print(self.request.method)
         serializer.save()
 
 
