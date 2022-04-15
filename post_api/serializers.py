@@ -3,9 +3,6 @@ from post.models import Post, Category, Tag, Comment
 
 
 class PostSerializer(serializers.ModelSerializer):
-    # category = serializers.StringRelatedField()
-    # author = serializers.StringRelatedField()
-    # tags = serializers.StringRelatedField(many=True)
 
     class Meta:
         model = Post
@@ -24,7 +21,6 @@ class PostSerializer(serializers.ModelSerializer):
                 
     def validate(self, data):
         # Eğer gelen veride baslik ve açıklama değerleri aynıysa hata ver
-        # Değilse datayı geri döndür
         if data['title'] == data['excerpt']:
             raise serializers.ValidationError('Başlık ve giriş cümlesi alanları aynı olamaz. Lütfen farklı bir giriş cümlesi giriniz.')
         
@@ -99,14 +95,13 @@ class SinglePostUpdateSerializer(serializers.ModelSerializer):
     
     def validate(self, data):
         # Eğer gelen veride baslik ve açıklama değerleri aynıysa hata ver
-        # Değilse datayı geri döndür
         if data['title'] == data['excerpt']:
             raise serializers.ValidationError('Başlık ve giriş cümlesi alanları aynı olamaz. Lütfen farklı bir giriş cümlesi giriniz.')
         
         return data
 
     def validate_title(self, value):
-        # Eğer baslik 3 harften küçükse hata ver
+        # Eğer baslik 5 harften küçükse hata ver
         if len(value) < 5: 
             raise serializers.ValidationError(f'Başlık 5 harften daha küçük olamaz. Siz {len(value)} girdiniz. Başlık alanınızı değiştiriniz.')
 

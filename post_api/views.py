@@ -6,7 +6,7 @@ from .pagination import LargePagination
 from django.db.models import Q
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.contrib.auth.models import User
-
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 class PostListCreateView(generics.ListCreateAPIView):
     # permission_classes = [IsAdminUserOrReadOnly]
@@ -25,7 +25,7 @@ class PostListCreateView(generics.ListCreateAPIView):
 class SinglePostRetrieveDestroyView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsOwnerOrReadOnly]
     queryset = Post.objects.prefetch_related('category', 'author', 'tags','comments')
-
+    authentication_classes = [JWTAuthentication]
 
     def get_serializer_class(self):
         if self.request.method == 'PUT':
@@ -66,9 +66,6 @@ class SearchPostListView(generics.ListAPIView):
             queryset = queryset.filter(Q(title__icontains=title) | Q(excerpt__icontains=title))
             
         return queryset
-    
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
 
 
 class CategoryListView(generics.ListCreateAPIView):
@@ -88,7 +85,6 @@ class CategoryPostListView(generics.ListAPIView):
     serializer_class = PostSerializer
 
     def get_queryset(self):
-        print('Girdi')
         return Post.objects.filter(category__pk = self.kwargs.get('category_pk')).prefetch_related('category', 'author', 'tags')
 
 
