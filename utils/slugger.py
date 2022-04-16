@@ -11,7 +11,7 @@ def slugger(instance):
         instance.slug = slugify(instance.title)
 
         for x in itertools.count(1):
-            if not Klass.objects.filter(slug = instance.slug).exists(): # TODO: Faster ORM
+            if not Klass.objects.filter(slug = instance.slug).only('slug').exists():
                 break
             instance.slug  = '%s-%d' % (instance.slug , x)
 
